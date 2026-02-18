@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Good Pair Days — Help Us Build Your Perfect Wine Experience</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --wine:#722F37;--wine-light:#8B3A44;--wine-dark:#5A252C;
+  --gold:#C5A55A;--cream:#FFF8F0;--white:#FFFFFF;
+  --g50:#F9FAFB;--g100:#F3F4F6;--g200:#E5E7EB;--g300:#D1D5DB;
+  --g400:#9CA3AF;--g500:#6B7280;--g600:#4B5563;--g700:#374151;--g800:#1F2937;
+}
+body{
+  font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+  background:var(--cream);color:var(--g800);
+  min-height:100vh;min-height:100dvh;display:flex;justify-content:center;
+}
+#app{
+  width:100%;max-width:520px;min-height:100vh;min-height:100dvh;
+  display:flex;flex-direction:column;background:var(--white);
+  box-shadow:0 0 40px rgba(0,0,0,.08);position:relative;
+}
+.start-screen{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:40px 24px;text-align:center;animation:fadeIn .5s ease;
+}
+.start-icon{font-size:56px;margin-bottom:20px}
+.start-title{font-size:22px;font-weight:700;color:var(--wine);margin-bottom:6px;line-height:1.3}
+.start-sub{font-size:14px;color:var(--g500);margin-bottom:28px;line-height:1.6;max-width:340px}
+.start-btn{
+  padding:14px 40px;background:var(--wine);color:#fff;border:none;
+  border-radius:30px;font-size:15px;font-weight:600;font-family:inherit;
+  cursor:pointer;transition:all .2s;
+}
+.start-btn:hover{background:var(--wine-dark);transform:translateY(-1px);box-shadow:0 4px 12px rgba(114,47,55,.3)}
+.start-time{font-size:12px;color:var(--g400);margin-top:10px}
+.chat-header{
+  background:var(--wine);color:#fff;padding:14px 20px 10px;position:sticky;top:0;z-index:100;
+}
+.header-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.header-av{
+  width:34px;height:34px;background:var(--gold);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:16px;
+}
+.header-name{font-size:15px;font-weight:600}
+.header-status{font-size:11px;opacity:.75}
+.prog-bar{width:100%;height:3px;background:rgba(255,255,255,.2);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .4s ease;width:0%}
+.prog-text{font-size:10px;opacity:.6;margin-top:3px;text-align:right}
+.chat-body{flex:1;overflow-y:auto;padding:16px 14px 100px;scroll-behavior:smooth}
+.msg{display:flex;gap:8px;margin-bottom:14px;animation:fadeUp .3s ease}
+.msg-av{
+  width:30px;height:30px;border-radius:50%;background:var(--wine);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;margin-top:2px;
+}
+.msg-bub{max-width:82%;padding:11px 15px;border-radius:18px;line-height:1.55;font-size:13.5px}
+.msg.bot .msg-bub{background:var(--g100);color:var(--g800);border-bottom-left-radius:4px}
+.msg.user{flex-direction:row-reverse}
+.msg.user .msg-bub{background:var(--wine);color:#fff;border-bottom-right-radius:4px}
+.msg.user .msg-av{display:none}
+.cat-div{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  margin:20px 0 14px;padding:9px 18px;
+  background:linear-gradient(135deg,var(--wine),var(--wine-light));
+  color:#fff;border-radius:10px;font-weight:600;font-size:12px;
+  text-transform:uppercase;letter-spacing:.4px;animation:fadeUp .3s ease;
+}
+.typing{display:flex;gap:4px;padding:11px 15px}
+.typing-d{width:7px;height:7px;background:var(--g400);border-radius:50%;animation:bounce 1.4s infinite ease-in-out}
+.typing-d:nth-child(2){animation-delay:.2s}
+.typing-d:nth-child(3){animation-delay:.4s}
+@keyframes bounce{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+.qr-wrap{display:flex;flex-wrap:wrap;gap:7px;padding:6px 14px 14px 48px;animation:fadeUp .3s ease}
+.qr-btn{
+  padding:9px 16px;border:2px solid var(--g200);border-radius:22px;
+  background:#fff;color:var(--g700);font-size:13px;font-family:inherit;
+  cursor:pointer;transition:all .15s;font-weight:500;white-space:nowrap;
+}
+.qr-btn:hover{border-color:var(--wine);color:var(--wine);background:rgba(114,47,55,.04)}
+.qr-btn:active{transform:scale(.95)}
+.t5-wrap{padding:6px 14px 14px 48px;animation:fadeUp .3s ease}
+.t5-item{
+  display:flex;align-items:center;gap:10px;padding:10px 14px;
+  border:2px solid var(--g200);border-radius:10px;background:#fff;
+  cursor:pointer;transition:all .15s;font-size:12.5px;line-height:1.4;margin-bottom:6px;
+}
+.t5-item:hover{border-color:var(--wine);background:rgba(114,47,55,.02)}
+.t5-item.sel{border-color:var(--wine);background:rgba(114,47,55,.07)}
+.t5-num{
+  width:26px;height:26px;border-radius:50%;background:var(--g200);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:11px;color:var(--g500);flex-shrink:0;transition:all .15s;
+}
+.t5-item.sel .t5-num{background:var(--wine);color:#fff}
+.t5-sub{
+  margin-top:8px;padding:11px 24px;background:var(--wine);color:#fff;
+  border:none;border-radius:22px;font-size:13px;font-weight:600;
+  font-family:inherit;cursor:pointer;transition:all .15s;display:block;margin-left:auto;margin-right:auto;
+}
+.t5-sub:hover{background:var(--wine-dark)}
+.t5-sub:disabled{background:var(--g300);cursor:not-allowed}
+.ti-wrap{display:flex;gap:8px;padding:6px 14px 14px 48px;animation:fadeUp .3s ease}
+.ti-input{
+  flex:1;padding:11px 15px;border:2px solid var(--g200);border-radius:22px;
+  font-size:13px;font-family:inherit;outline:none;transition:border-color .2s;
+  resize:none;min-height:44px;max-height:120px;
+}
+.ti-input:focus{border-color:var(--wine)}
+.ti-send{
+  width:42px;height:42px;border:none;background:var(--wine);color:#fff;
+  border-radius:50%;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;font-size:16px;transition:background .15s;flex-shrink:0;
+}
+.ti-send:hover{background:var(--wine-dark)}
+.ti-skip{
+  padding:9px 16px;border:2px solid var(--g200);border-radius:22px;
+  background:#fff;color:var(--g500);font-size:13px;font-family:inherit;
+  cursor:pointer;transition:all .15s;font-weight:500;flex-shrink:0;
+}
+.ti-skip:hover{border-color:var(--g400);color:var(--g700)}
+/* Thank you screen */
+.thankyou{animation:fadeIn .6s ease;text-align:center;padding:40px 24px}
+.ty-icon{font-size:56px;margin-bottom:16px}
+.ty-title{font-size:22px;font-weight:700;color:var(--wine);margin-bottom:8px}
+.ty-text{font-size:14px;color:var(--g500);line-height:1.6;max-width:360px;margin:0 auto}
+
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:520px){#app{max-width:100%}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// ═══════════════════════════════════════════════════════════════
+// CONFIG — Set your webhook URL here to collect responses.
+// Compatible with Google Sheets (via Apps Script), Zapier, Make,
+// or any endpoint that accepts JSON POST.
+// Leave blank to only use localStorage.
+// ═══════════════════════════════════════════════════════════════
+const WEBHOOK_URL = ''; // e.g. 'https://script.google.com/macros/s/YOUR_ID/exec'
+
+// ─── FEATURE DATA ────────────────────────────────────────────
+const FEATURES = [
+  {
+    id:'adventure_dial', cat:'How We Pick Your Wines', catIcon:'🎯',
+    name:'Adventure vs comfort-zone dial',
+    chat:"Imagine a dial on your account — one end says \"stick to what I love\", the other says \"surprise me with something new.\" You'd control exactly how adventurous your box is.\n\nHow important is this to you?",
+    reactions:{5:"You're an explorer at heart! This was one of the loudest requests from members.",4:"Great — lots of members are keen on this too.",3:"Fair enough! It's a handy control to have.",2:"Noted — not everyone needs that dial.",1:"No worries, we'll focus on what matters to you."}
+  },
+  {
+    id:'new_quiz', cat:'How We Pick Your Wines',
+    name:'A new, more detailed taste quiz',
+    chat:"What about a more detailed taste quiz that captures more nuance about your preferences — and that you can easily update as your tastes evolve over time?",
+    reactions:{5:"Totally get it — your palate is always evolving!",4:"A deeper quiz could really sharpen your recommendations.",3:"Good to know. A better quiz could help fine-tune things.",2:"Understood — the current one might be enough for you.",1:"That's fair — not everyone wants more questions!"}
+  },
+  {
+    id:'pref_mgmt', cat:'How We Pick Your Wines',
+    name:'Stronger preference management',
+    chat:"How about having finer controls over things like sweetness vs dryness, and body & boldness? Think of it as tuning your wine preferences like an equaliser. 🎛️",
+    reactions:{5:"A true wine nerd! These levers could make a huge difference.",4:"Those fine controls would definitely help us nail your picks.",3:"Nice — more granularity is always useful.",2:"Got it — you're pretty happy with how things work now.",1:"No problem — not everyone needs that level of detail."}
+  },
+  {
+    id:'country_filter', cat:'How We Pick Your Wines',
+    name:'Country & region filter',
+    chat:"Would you want to choose which countries or regions your wines come from? Like \"only Australian + NZ\" or \"more European wines please.\" 🌍",
+    reactions:{5:"You know what you like! Region is clearly important to you.",4:"Nice — a lot of members have strong regional preferences.",3:"Could be handy for those months you're craving something specific.",2:"Makes sense — you're happy exploring anywhere.",1:"You're open to wines from everywhere — love it!"}
+  },
+  {
+    id:'exclude_grapes', cat:'How We Pick Your Wines',
+    name:'More control over excluding grapes or styles',
+    chat:"Last one in this section — a \"never send me this\" list for specific grapes or styles. An upgraded Wines to Avoid, basically. How important?",
+    reactions:{5:"Strong feelings here! We hear you — no more unwanted Chardonnay.",4:"A proper exclusion list would solve a lot of frustrations.",3:"A handy safety net for those grapes you just can't stand.",2:"Noted — you're fairly flexible.",1:"You're open to anything — love the adventurous spirit!"}
+  },
+  {
+    id:'half_stars', cat:'Rating & Understanding', catIcon:'⭐',
+    name:'Rate with half-stars',
+    chat:"Right now you rate wines with whole stars. Would half-star ratings (like 3.5 or 4.5) give you more accuracy when you're rating?",
+    reactions:{5:"Precision matters! That gap between 3 and 4 stars is real.",4:"Half-stars would definitely help capture those \"it was good but not great\" moments.",3:"A small but meaningful improvement.",2:"Got it — whole stars do the job for you.",1:"Fair enough — keeping it simple works too."}
+  },
+  {
+    id:'flavour_tags', cat:'Rating & Understanding',
+    name:'Richer rating with flavour tags',
+    chat:"When rating a wine, what if you could tag specific things — like \"too oaky\", \"too acidic\", or \"loved the fruit\" — and have that actually improve your future picks?",
+    reactions:{5:"Yes! This kind of feedback loop could be a game-changer.",4:"Flavour tags would really help us learn what you love (and don't).",3:"A nice addition — more context = better recommendations.",2:"Understood — you prefer keeping ratings simple.",1:"Simple is good too!"}
+  },
+  {
+    id:'rec_explain', cat:'Rating & Understanding',
+    name:'Recommendation explanations',
+    chat:"Would you like to see a short explanation of WHY each wine was picked for you? Something like \"This matches your love of bold reds from the Barossa Valley.\" 🍷",
+    reactions:{5:"Transparency is key for you! We love that.",4:"Knowing the 'why' makes the experience so much richer.",3:"A nice touch — helps you learn about your own tastes too.",2:"Got it — you trust us to pick, no explanation needed!",1:"You just want the wine, not the story — we respect that!"}
+  },
+  {
+    id:'flex_frequency', cat:'Subscription Flexibility', catIcon:'📦',
+    name:'Flexible delivery frequency',
+    chat:"Instead of just monthly or quarterly — what if you could choose any frequency? Every 2, 3, 4, 6, or 8 weeks, whatever suits your drinking pace. ⏱️",
+    reactions:{5:"Flexibility is huge for you! This was a massively requested feature.",4:"Having control over timing makes a big difference.",3:"Nice to have that option for those months wine builds up.",2:"The current options work okay for you then.",1:"No worries — monthly suits you fine."}
+  },
+  {
+    id:'couples', cat:'Subscription Flexibility',
+    name:'Couples / household profiles',
+    chat:"For households with different tastes: two separate taste profiles on one account, so each person gets wines matched to their palate. How important is this? 👫",
+    reactions:{5:"Sharing an account but not the same palate — we totally get it!",4:"A split profile would solve a common household dilemma.",3:"Could be useful for some members sharing accounts.",2:"Maybe not relevant for your situation right now.",1:"No worries — solo tasting it is!"}
+  },
+  {
+    id:'chillable', cat:'Subscription Flexibility',
+    name:'Chillable category',
+    chat:"A \"Chillable\" category that recommends from white, rosé AND sparkling combined — instead of having to choose just one. Best of the chilled world! 🧊",
+    reactions:{5:"Love it — why choose when you can have them all!",4:"A blended chilled selection sounds really appealing.",3:"A nice option for the warmer months especially.",2:"You've got your preferred colour locked in.",1:"You know what you want — respect!"}
+  },
+  {
+    id:'mystery', cat:'Subscription Flexibility',
+    name:'Mystery category',
+    chat:"A \"Surprise Me\" category where you could get any combination of red, white, rosé, or sparkling. Total mystery box! 🎁",
+    reactions:{5:"You love a surprise! This would be exciting.",4:"The thrill of not knowing — there's something fun about that.",3:"Could be a nice change of pace now and then.",2:"You like knowing what's coming.",1:"You prefer to stay in control — totally fair."}
+  },
+  {
+    id:'non_alc', cat:'Subscription Flexibility',
+    name:'Non-alcoholic category',
+    chat:"A dedicated non-alcoholic wine category with its own rules and recommendations. How important is this to you?",
+    reactions:{5:"This clearly matters to you — great feedback!",4:"Non-alc wines are having a real moment.",3:"Nice option to have, even if not for every box.",2:"Not top of mind for you, but noted.",1:"Not your thing — that's fine!"}
+  },
+  {
+    id:'allergen', cat:'Subscription Flexibility',
+    name:'Allergen & health filter',
+    chat:"Filters for low-sulphite, preservative-free, or histamine-friendly wines if you have sensitivities. How important? 🏥",
+    reactions:{5:"Health matters — we want to make sure your wines work for your body too.",4:"Important for those who are sensitive — good to know it matters to you.",3:"A thoughtful addition for those who need it.",2:"Not a concern for you personally, but noted.",1:"No sensitivities to worry about — lucky you!"}
+  },
+  {
+    id:'bday_choice', cat:'Rewards & Milestones', catIcon:'🎂',
+    name:'Choose your birthday & anniversary wine type',
+    chat:"Last feature! Being able to pick the type of wine (red, white, rosé, sparkling) for your free birthday and anniversary bottles, instead of us choosing. How important?",
+    reactions:{5:"Your special day, your choice — makes total sense!",4:"A nice personal touch for your milestone moments.",3:"A small but meaningful upgrade to the reward.",2:"You're happy with whatever we send — easy going!",1:"You like the surprise element of the current rewards."}
+  }
+];
+
+const CATEGORIES = [...new Set(FEATURES.map(f=>f.cat))];
+const CAT_ICONS = {};
+FEATURES.forEach(f=>{if(f.catIcon) CAT_ICONS[f.cat]=f.catIcon});
+
+const RATING_OPTIONS = [
+  {label:"Must-have!",value:5},
+  {label:"Very important",value:4},
+  {label:"Moderately",value:3},
+  {label:"Slightly",value:2},
+  {label:"Not important",value:1}
+];
+
+// ─── STATE ─────────────────────────────────────────────────────
+let state = {phase:'start',currentQ:0,answers:{},top5:[],openText:'',lastCat:''};
+const app = document.getElementById('app');
+
+// ─── RENDER ────────────────────────────────────────────────────
+function renderStart(){
+  app.innerHTML = `
+    <div class="start-screen">
+      <div class="start-icon">🍷</div>
+      <div class="start-title">Help Us Build Your Perfect Wine Experience</div>
+      <p class="start-sub">We're designing the next generation of personalisation at Good Pair Days. Chat with us about 15 features we're considering — your answers directly shape what we build next.</p>
+      <button class="start-btn" onclick="startChat()">Let's Go</button>
+      <div class="start-time">Takes about 3 minutes</div>
+    </div>`;
+}
+
+function startChat(){
+  state.phase='chat';
+  app.innerHTML = `
+    <div class="chat-header">
+      <div class="header-row">
+        <div class="header-av">🍷</div>
+        <div><div class="header-name">Good Pair Days</div><div class="header-status">Building your perfect experience</div></div>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+      <div class="prog-text" id="progText"></div>
+    </div>
+    <div class="chat-body" id="chatBody"></div>`;
+  updateProgress();
+  addBotMsgs([
+    "Hey! 👋 Thanks for helping us shape the future of Good Pair Days.",
+    "I'm going to walk you through 15 potential features we're thinking about building. For each one, just tell me how important it is to you.",
+    "Ready? Let's start!"
+  ], ()=>showQuestion(0));
+}
+
+function updateProgress(){
+  const total=FEATURES.length+2, current=state.phase==='top5'?FEATURES.length:state.phase==='opentext'?FEATURES.length+1:state.phase==='done'?total:state.currentQ;
+  const pct=Math.round((current/total)*100);
+  const fill=document.getElementById('progFill'), text=document.getElementById('progText');
+  if(fill) fill.style.width=pct+'%';
+  if(text) text.textContent=current+'/'+total;
+}
+
+function scrollToBottom(){
+  const b=document.getElementById('chatBody');
+  if(b) setTimeout(()=>b.scrollTop=b.scrollHeight,50);
+}
+
+function addMessage(type,content){
+  const b=document.getElementById('chatBody');
+  if(!b) return;
+  const d=document.createElement('div');d.className='msg '+type;
+  d.innerHTML=type==='bot'?`<div class="msg-av">🍷</div><div class="msg-bub">${content}</div>`:`<div class="msg-bub">${content}</div>`;
+  b.appendChild(d);scrollToBottom();
+}
+
+function addCategoryDivider(cat){
+  const b=document.getElementById('chatBody');if(!b)return;
+  const d=document.createElement('div');d.className='cat-div';
+  d.innerHTML=`${CAT_ICONS[cat]||'📋'} ${cat}`;b.appendChild(d);scrollToBottom();
+}
+
+function showTyping(){
+  const b=document.getElementById('chatBody');if(!b)return;
+  const d=document.createElement('div');d.className='msg bot';d.id='typingMsg';
+  d.innerHTML=`<div class="msg-av">🍷</div><div class="typing"><div class="typing-d"></div><div class="typing-d"></div><div class="typing-d"></div></div>`;
+  b.appendChild(d);scrollToBottom();
+}
+function hideTyping(){const e=document.getElementById('typingMsg');if(e)e.remove();}
+
+function addBotMsgs(msgs,cb){
+  let i=0;
+  (function next(){
+    if(i>=msgs.length){if(cb)cb();return;}
+    showTyping();
+    setTimeout(()=>{hideTyping();addMessage('bot',msgs[i].replace(/\n/g,'<br>'));i++;setTimeout(next,200);},Math.min(400+msgs[i].length*8,1200));
+  })();
+}
+
+// ─── QUESTIONS ─────────────────────────────────────────────────
+function showQuestion(idx){
+  if(idx>=FEATURES.length){state.phase='top5';updateProgress();showTop5();return;}
+  state.currentQ=idx;updateProgress();
+  const f=FEATURES[idx];
+  if(f.cat!==state.lastCat){
+    state.lastCat=f.cat;
+    const intros={'How We Pick Your Wines':"First up — features that give you more control over what actually lands in your box. 🎯",'Rating & Understanding':"Now let's talk about how you rate and understand your wines. 📝",'Subscription Flexibility':"Next — subscription flexibility. How, when, and what gets delivered. 📦",'Rewards & Milestones':"Almost done! One more about your rewards. 🎂"};
+    setTimeout(()=>{addCategoryDivider(f.cat);setTimeout(()=>{addBotMsgs([intros[f.cat],f.chat.replace(/\n/g,'<br>')],()=>showRatingBtns(idx));},300);},300);
+  } else {
+    addBotMsgs([f.chat.replace(/\n/g,'<br>')],()=>showRatingBtns(idx));
+  }
+}
+
+function showRatingBtns(idx){
+  const b=document.getElementById('chatBody');if(!b)return;
+  const w=document.createElement('div');w.className='qr-wrap';w.id='qrWrap';
+  RATING_OPTIONS.forEach(o=>{
+    const btn=document.createElement('button');btn.className='qr-btn';btn.textContent=o.label;
+    btn.onclick=()=>handleRating(idx,o.value,o.label);w.appendChild(btn);
+  });
+  b.appendChild(w);scrollToBottom();
+}
+
+function handleRating(idx,value,label){
+  const w=document.getElementById('qrWrap');if(w)w.remove();
+  state.answers[FEATURES[idx].id]=value;
+  addMessage('user',label);
+  setTimeout(()=>{addBotMsgs([FEATURES[idx].reactions[value]],()=>{setTimeout(()=>showQuestion(idx+1),200);});},200);
+}
+
+// ─── TOP 5 ─────────────────────────────────────────────────────
+function showTop5(){
+  addBotMsgs([
+    "Awesome, you've rated all 15 features! 🎉",
+    "Now the big question — if we could only build 5 of these, which 5 matter most to you? Tap them in order of importance (1st = most important)."
+  ],()=>{
+    const b=document.getElementById('chatBody');if(!b)return;
+    const w=document.createElement('div');w.className='t5-wrap';w.id='t5Wrap';
+    FEATURES.forEach(f=>{
+      const it=document.createElement('div');it.className='t5-item';it.dataset.id=f.id;
+      it.innerHTML=`<div class="t5-num" id="t5n_${f.id}">-</div><div>${f.name}</div>`;
+      it.onclick=()=>toggleTop5(f.id);w.appendChild(it);
+    });
+    const btn=document.createElement('button');btn.className='t5-sub';btn.id='t5Submit';
+    btn.disabled=true;btn.textContent='Confirm my Top 5';btn.onclick=submitTop5;
+    w.appendChild(btn);b.appendChild(w);scrollToBottom();
+  });
+}
+
+function toggleTop5(id){
+  const i=state.top5.indexOf(id);
+  if(i>-1)state.top5.splice(i,1);else{if(state.top5.length>=5)return;state.top5.push(id);}
+  FEATURES.forEach(f=>{
+    const it=document.querySelector(`.t5-item[data-id="${f.id}"]`),num=document.getElementById('t5n_'+f.id),pos=state.top5.indexOf(f.id);
+    if(pos>-1){it.classList.add('sel');num.textContent=pos+1;}else{it.classList.remove('sel');num.textContent='-';}
+  });
+  const btn=document.getElementById('t5Submit');
+  if(btn){btn.disabled=state.top5.length!==5;btn.textContent=state.top5.length===5?'Confirm my Top 5':`Pick ${5-state.top5.length} more`;}
+}
+
+function submitTop5(){
+  const w=document.getElementById('t5Wrap');if(w)w.remove();
+  addMessage('user',state.top5.map((id,i)=>`${i+1}. ${FEATURES.find(f=>f.id===id).name}`).join('<br>'));
+  state.phase='opentext';updateProgress();
+  setTimeout(()=>{addBotMsgs(["Great choices! 👌","Last question — is there anything else you wish you could customise about your Good Pair Days experience that we haven't mentioned? (Feel free to skip if nothing comes to mind)"],showTextInput);},300);
+}
+
+// ─── OPEN TEXT ──────────────────────────────────────────────────
+function showTextInput(){
+  const b=document.getElementById('chatBody');if(!b)return;
+  const w=document.createElement('div');w.className='ti-wrap';w.id='tiWrap';
+  w.innerHTML=`<textarea class="ti-input" id="tiInput" placeholder="Type your thoughts..." rows="1" oninput="autoGrow(this)"></textarea><button class="ti-send" onclick="submitText()">→</button><button class="ti-skip" onclick="skipText()">Skip</button>`;
+  b.appendChild(w);scrollToBottom();
+  const inp=document.getElementById('tiInput');inp.focus();
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();submitText();}});
+}
+function autoGrow(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px';}
+
+function submitText(){
+  const v=(document.getElementById('tiInput')?.value||'').trim();
+  if(!v)return skipText();
+  state.openText=v;
+  document.getElementById('tiWrap')?.remove();
+  addMessage('user',v);finishSurvey();
+}
+function skipText(){
+  document.getElementById('tiWrap')?.remove();
+  addMessage('user','Nothing else — all good!');finishSurvey();
+}
+
+// ─── FINISH & SUBMIT ───────────────────────────────────────────
+function finishSurvey(){
+  const payload = {
+    id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36)+Math.random().toString(36).slice(2),
+    timestamp: new Date().toISOString(),
+    ratings: {},
+    top5: state.top5,
+    openText: state.openText
+  };
+  FEATURES.forEach(f=>{payload.ratings[f.id]=state.answers[f.id]||0;});
+
+  // Save to localStorage
+  try {
+    const existing = JSON.parse(localStorage.getItem('gpd_survey_responses')||'[]');
+    existing.push(payload);
+    localStorage.setItem('gpd_survey_responses', JSON.stringify(existing));
+  } catch(e){}
+
+  // POST to webhook if configured
+  if(WEBHOOK_URL){
+    fetch(WEBHOOK_URL, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload)
+    }).catch(()=>{});
+  }
+
+  state.phase='done';updateProgress();
+  setTimeout(()=>{
+    addBotMsgs([
+      "Thank you so much for taking the time! 💜",
+      "Your answers go directly to our product team. We'll share what we're building based on your feedback soon.",
+      "Enjoy your next box! 🍷"
+    ]);
+  },400);
+}
+
+// ─── INIT ──────────────────────────────────────────────────────
+renderStart();
+</script>
+</body>
+</html>
